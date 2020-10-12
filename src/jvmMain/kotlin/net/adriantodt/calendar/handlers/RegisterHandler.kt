@@ -15,16 +15,21 @@ import net.adriantodt.calendar.rest.register.RegisterResponse
 import net.adriantodt.calendar.rest.register.RegisterResponseStatus
 import java.util.*
 
+/**
+ * Handler of POST '/api/register' endpoint.
+ */
 class RegisterHandler(
     private val dao: DataAccessObject,
     private val algorithm: Algorithm,
     private val generator: NanoflakeLocalGenerator
 ) : Handler {
     override fun handle(ctx: Context) {
-        val registerReq = Json.decodeFromString<RegisterRequest>(ctx.body())
+        // Decode the Register Request from the Body of the Request using KotlinX Serialization
+        val req = Json.decodeFromString<RegisterRequest>(ctx.body())
 
-        if (registerReq.username.isEmpty() || registerReq.password.isEmpty()) {
-            ctx.result(
+        // Check if the username and password are not empty and if there's no user with the same username.
+        if (req.username.isEmpty() || req.password.isEmpty() || dao.getUserByUsername(req.username) != null) {
+            ctx.contentType("application/json").result(
                 Json.encodeToString(
                     RegisterResponse(
                         status = RegisterResponseStatus.USERNAME_ALREADY_EXISTS,
@@ -35,42 +40,24 @@ class RegisterHandler(
             return
         }
 
-        val user = dao.getUserByUsername(registerReq.username)
-
-        if (user != null) {
-            ctx.result(
-                Json.encodeToString(
-                    RegisterResponse(
-                        status = RegisterResponseStatus.USERNAME_ALREADY_EXISTS,
-                        token = null
-                    )
-                )
-            )
-            return
-        }
-
-        val id = generator.next()
-
-        val newUser = User(
-            id = id.withRadix(36),
-            username = registerReq.username,
-            hashedPassword = DataAccessObject.hashPassword(registerReq.password)
+        // Create the new User, then insert it in the database
+        val u = User(
+            id = generator.next().withRadix(36),
+            username = req.username,
+            hashedPassword = DataAccessObject.hashPassword(req.password)
         )
+        dao.insertUser(u)
 
-        dao.insertUser(newUser)
-
-        val jwt = JWT.create()
-            .withIssuer("kalendar")
-            .withSubject(id.withRadix(36))
-            .withIssuedAt(Date())
-            //.withExpiresAt(Date.from(Instant.now().plus(60, ChronoUnit.DAYS)))
-            .sign(algorithm)
-
-        ctx.result(
+        // Create and encode the Register Response into a Json
+        ctx.contentType("application/json").result(
             Json.encodeToString(
                 RegisterResponse(
                     status = RegisterResponseStatus.OK,
-                    token = jwt
+                    token = JWT.create() // Create and sign a JWT token for authentication.
+                        .withIssuer("kalendar")
+                        .withSubject(u.id)
+                        .withIssuedAt(Date())
+                        .sign(algorithm)
                 )
             )
         )

@@ -9,6 +9,9 @@ import org.jdbi.v3.jackson2.Jackson2Config
 import org.jdbi.v3.jackson2.Jackson2Plugin
 import org.jdbi.v3.postgres.PostgresPlugin
 
+/**
+ * The [DataAccessObject] implementation, using [Jdbi] as its database layer.
+ */
 class JdbiDataAccessObject(url: String) : DataAccessObject {
     private val jdbi = Jdbi.create(url)
         .installPlugin(PostgresPlugin())

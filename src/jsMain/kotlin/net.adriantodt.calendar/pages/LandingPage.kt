@@ -30,11 +30,11 @@ fun landingPage() {
         window.location.href = "/me"
         return
     }
-    loginModal()
-    registerModal()
+    configureLoginModal()
+    configureRegisterModal()
 }
 
-private fun registerModal() {
+private fun configureRegisterModal() {
     val username = document.getElementById("registerInputUsername") as HTMLInputElement
     val password = document.getElementById("registerInputPassword") as HTMLInputElement
     val submitBtn = document.getElementById("registerSubmit") as HTMLButtonElement
@@ -88,7 +88,7 @@ private fun registerModal() {
 }
 
 
-private fun loginModal() {
+private fun configureLoginModal() {
     val username = document.getElementById("loginInputUsername") as HTMLInputElement
     val password = document.getElementById("loginInputPassword") as HTMLInputElement
     val submitBtn = document.getElementById("loginSubmit") as HTMLButtonElement

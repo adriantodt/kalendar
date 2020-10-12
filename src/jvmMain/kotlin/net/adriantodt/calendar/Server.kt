@@ -9,16 +9,19 @@ import net.adriantodt.calendar.dao.JdbiDataAccessObject
 import net.adriantodt.calendar.handlers.*
 
 fun main() {
-    val app = Javalin.create {
-        it.addStaticFiles("/static")
-        it.showJavalinBanner = false
-    }
-
+    // Common objects for the route handlers are initialized here
     val dao = JdbiDataAccessObject("jdbc:postgresql://localhost:15432/kalendar?user=postgres&password=tokenlabkalendar")
     val generator = NanoflakeLocalGenerator(KALENDAR_EPOCH, 0)
     val algorithm = Algorithm.HMAC256(System.getenv("kalendar_secret") ?: "kalendar_is_very_secret_indeed")
     val verifier = JWT.require(algorithm).withIssuer("kalendar").build()
 
+    // Configure the Javalin app
+    val app = Javalin.create { cfg ->
+        cfg.addStaticFiles("/static")
+        cfg.showJavalinBanner = false
+    }
+
+    // Configure the routes
     app.routes {
         path("api") {
             post("login", LoginHandler(dao, algorithm))
@@ -32,5 +35,6 @@ fun main() {
         }
     }
 
+    // Start the app
     app.start(System.getenv("kalendar_port")?.toIntOrNull() ?: 8080)
 }

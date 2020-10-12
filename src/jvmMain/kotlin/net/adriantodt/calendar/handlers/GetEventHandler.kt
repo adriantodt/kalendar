@@ -9,16 +9,23 @@ import net.adriantodt.calendar.dao.DataAccessObject
 import net.adriantodt.calendar.rest.events.crud.GetEventResponse
 import net.adriantodt.calendar.rest.events.crud.GetEventResponseStatus
 
-class GetEventHandler(private val dao: DataAccessObject, private val verifier: JWTVerifier) : Handler {
+/**
+ * Handler of GET '/api/event/:id' endpoint.
+ */
+class GetEventHandler(
+    private val dao: DataAccessObject,
+    private val verifier: JWTVerifier
+) : Handler {
     override fun handle(ctx: Context) {
+        // Validate the token and get the userId
         val userId = Authorizations.validate(ctx, dao, verifier)
 
-        val id = ctx.pathParam("id")
+        // Get the event using the path parameter
+        val event = dao.getEvent(ctx.pathParam("id"))
 
-        val event = dao.getEvent(id)
-
+        // Check if the event exists and the event's author matches the token's user.
         if (event == null || event.authorId != userId) {
-            ctx.result(
+            ctx.contentType("application/json").result(
                 Json.encodeToString(
                     GetEventResponse(
                         status = GetEventResponseStatus.EVENT_DOES_NOT_EXIST,
@@ -29,7 +36,8 @@ class GetEventHandler(private val dao: DataAccessObject, private val verifier: J
             return
         }
 
-        ctx.result(
+        // Create and encode the Get Event Response into a Json
+        ctx.contentType("application/json").result(
             Json.encodeToString(
                 GetEventResponse(
                     status = GetEventResponseStatus.OK,

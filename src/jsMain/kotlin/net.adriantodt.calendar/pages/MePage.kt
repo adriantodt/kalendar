@@ -38,8 +38,8 @@ fun mePage() {
         logoutAndRedirect()
     }
 
-    fetchAndFill(token)
-    createEventModal(token)
+    fetchAndFillEvents(token)
+    configureCreateEventModal(token)
 
     onModelShown("#createEventModal") {
         (document.getElementById("createEventInputTitle") as HTMLInputElement).focus()
@@ -52,7 +52,7 @@ fun mePage() {
     }
 }
 
-private fun fetchAndFill(token: String) {
+private fun fetchAndFillEvents(token: String) {
     val req = RequestInit(
         method = "get",
         headers = headers(
@@ -122,8 +122,8 @@ private fun appendAndEnableCard(token: String, node: HTMLElement, event: Calenda
 
     for (anchor in div.querySelectorAll("a.card-link").asList().filterIsInstance<HTMLAnchorElement>()) {
         when (anchor.dataset["linktype"]) {
-            "edit" -> editModal(token, anchor, event)
-            "delete" -> deleteModal(token, anchor, event)
+            "edit" -> configureEditModal(token, anchor, event)
+            "delete" -> configureDeleteModal(token, anchor, event)
         }
     }
 }
@@ -144,7 +144,7 @@ private fun showModalBySelector(selector: String) {
     jQuery(selector).asDynamic().modal("show") // essa função é equivalente a $(selector).modal('show')
 }
 
-private fun createEventModal(token: String) {
+private fun configureCreateEventModal(token: String) {
     val title = document.getElementById("createEventInputTitle") as HTMLInputElement
     val description = document.getElementById("createEventInputDescription") as HTMLTextAreaElement
     val start = document.getElementById("createEventInputStartDateTime") as HTMLInputElement
@@ -178,7 +178,7 @@ private fun createEventModal(token: String) {
 
         window.fetch("/api/event", req).then { r ->
             if (r.ok) {
-                fetchAndFill(token)
+                fetchAndFillEvents(token)
                 hideModalBySelector("#createEventModal")
 
                 // Clear the modal
@@ -201,7 +201,7 @@ private fun createEventModal(token: String) {
     end.addEventListener("keyup", EventListener { if ((it as KeyboardEvent).keyCode == 13) onSubmit() })
 }
 
-private fun editModal(token: String, anchor: HTMLAnchorElement, event: CalendarEvent) {
+private fun configureEditModal(token: String, anchor: HTMLAnchorElement, event: CalendarEvent) {
     val title = document.getElementById("editEventInputTitle") as HTMLInputElement
     val description = document.getElementById("editEventInputDescription") as HTMLTextAreaElement
     val start = document.getElementById("editEventInputStartDateTime") as HTMLInputElement
@@ -245,7 +245,7 @@ private fun editModal(token: String, anchor: HTMLAnchorElement, event: CalendarE
 
             window.fetch("/api/event/${event.id}", req).then { r ->
                 if (r.ok) {
-                    fetchAndFill(token)
+                    fetchAndFillEvents(token)
                     hideModalBySelector("#editEventModal")
                 }
                 if (r.status == 403.toShort()) {
@@ -263,7 +263,7 @@ private fun editModal(token: String, anchor: HTMLAnchorElement, event: CalendarE
     }
 }
 
-private fun deleteModal(token: String, anchor: HTMLAnchorElement, event: CalendarEvent) {
+private fun configureDeleteModal(token: String, anchor: HTMLAnchorElement, event: CalendarEvent) {
     val submitBtn = document.getElementById("deleteEventSubmit") as HTMLButtonElement
     anchor.onclick = {
         submitBtn.onclick = {
@@ -278,7 +278,7 @@ private fun deleteModal(token: String, anchor: HTMLAnchorElement, event: Calenda
 
             window.fetch("/api/event/${event.id}", req).then { r ->
                 if (r.ok) {
-                    fetchAndFill(token)
+                    fetchAndFillEvents(token)
                     hideModalBySelector("#deleteEventModal")
                 }
                 if (r.status == 403.toShort()) {

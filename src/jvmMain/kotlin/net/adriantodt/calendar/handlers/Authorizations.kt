@@ -30,5 +30,4 @@ object Authorizations {
         // If all the above conditions match, the user ID is returned.
         return userId
     }
-
 }

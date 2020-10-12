@@ -13,12 +13,20 @@ import net.adriantodt.calendar.rest.login.LoginResponse
 import net.adriantodt.calendar.rest.login.LoginResponseStatus
 import java.util.*
 
-class LoginHandler(private val dao: DataAccessObject, private val algorithm: Algorithm) : Handler {
+/**
+ * Handler of POST '/api/login' endpoint.
+ */
+class LoginHandler(
+    private val dao: DataAccessObject,
+    private val algorithm: Algorithm
+) : Handler {
     override fun handle(ctx: Context) {
-        val loginReq = Json.decodeFromString<LoginRequest>(ctx.body())
+        // Decode the Login Request from the Body of the Request using KotlinX Serialization
+        val req = Json.decodeFromString<LoginRequest>(ctx.body())
 
-        if (loginReq.username.isEmpty() || loginReq.password.isEmpty()) {
-            ctx.result(
+        // Check if the username and password are not empty
+        if (req.username.isEmpty() || req.password.isEmpty()) {
+            ctx.contentType("application/json").result(
                 Json.encodeToString(
                     LoginResponse(
                         status = LoginResponseStatus.INCORRECT_CREDENTIALS,
@@ -29,10 +37,10 @@ class LoginHandler(private val dao: DataAccessObject, private val algorithm: Alg
             return
         }
 
-        val user = dao.getUserByUsername(loginReq.username)
-
-        if (user == null || user.hashedPassword != DataAccessObject.hashPassword(loginReq.password)) {
-            ctx.result(
+        // Check if the user exists and the password is valid.
+        val user = dao.getUserByUsername(req.username)
+        if (user == null || !DataAccessObject.checkPassword(user.hashedPassword, req.password)) {
+            ctx.contentType("application/json").result(
                 Json.encodeToString(
                     LoginResponse(
                         status = LoginResponseStatus.INCORRECT_CREDENTIALS,
@@ -43,18 +51,16 @@ class LoginHandler(private val dao: DataAccessObject, private val algorithm: Alg
             return
         }
 
-        val jwt = JWT.create()
-            .withIssuer("kalendar")
-            .withSubject(user.id)
-            .withIssuedAt(Date())
-            //.withExpiresAt(Date.from(Instant.now().plus(60, ChronoUnit.DAYS)))
-            .sign(algorithm)
-
-        ctx.result(
+        // Create and encode the Login Response into a Json
+        ctx.contentType("application/json").result(
             Json.encodeToString(
                 LoginResponse(
                     status = LoginResponseStatus.OK,
-                    token = jwt
+                    token = JWT.create() // Create and sign a JWT token for authentication.
+                        .withIssuer("kalendar")
+                        .withSubject(user.id)
+                        .withIssuedAt(Date())
+                        .sign(algorithm)
                 )
             )
         )
