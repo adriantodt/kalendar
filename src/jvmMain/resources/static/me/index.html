@@ -1,0 +1,198 @@
+<!doctype html>
+<html data-app="me" lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
+
+    <!-- Bootstrap CSS -->
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/darkly/bootstrap.min.css"
+          integrity="sha384-nNK9n28pDUDDgIiIqZ/MiyO3F4/9vsMtReZK39klb/MtkZI3/LtjSjlmyVPS3KdN" rel="stylesheet">
+
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Rome -->
+    <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/rome/3.0.2/rome.min.css"
+          integrity="sha512-4L16meoB/Rg9Z+IwlKrZx7EwIAnofy3waCEhjh9rxqjfUNeJacxPJaGt245S9hczGy4VF4480o3zFmyHIntNag=="
+          rel="stylesheet"/>
+
+    <!-- Patches -->
+    <link href="../patches.css" rel="stylesheet">
+
+    <title>Kalendar</title>
+</head>
+<body class="mt-5 pt-5">
+<nav class="navbar fixed-top navbar-expand-lg  navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="#">KALENDAR</a>
+        <button aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-target="#navbarNav" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logoutBtn">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    <div id="nextEventsContainer">
+        <div class="d-flex flex-row px-1 pb-1">
+            <h3 class="flex-grow-1">Seus próximos eventos:</h3>
+            <button class="btn btn-success" data-target="#createEventModal" data-toggle="modal" type="button">
+                Novo
+            </button>
+        </div>
+        <div class="row no-gutters align-items-center" id="nextEventsRow">
+            <div class="col text-center">
+                <div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Criação de Eventos -->
+<div aria-hidden="true" aria-labelledby="createEventModalLabel" class="modal fade" id="createEventModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createEventModalLabel">Novo Evento</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="createEventInputTitle">Título</label>
+                    <input class="form-control" id="createEventInputTitle" type="text">
+                    <div class="invalid-feedback">
+                        Esse campo é requerido.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="createEventInputStartDateTime">Data de Início</label>
+                            <input class="form-control" id="createEventInputStartDateTime" type="text">
+                            <div class="invalid-feedback">
+                                Esse campo é requerido.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="createEventInputEndDateTime">Data de Fim</label>
+                            <input class="form-control" id="createEventInputEndDateTime" type="text">
+                            <div class="invalid-feedback">
+                                Esse campo é requerido.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="createEventInputDescription">Descrição</label>
+                    <textarea class="form-control" id="createEventInputDescription" rows="9"></textarea>
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-primary" id="createEventSubmit" type="button">Criar &raquo;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Edição de Eventos -->
+<div aria-hidden="true" aria-labelledby="createEventModalLabel" class="modal fade" id="editEventModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editEventInputTitle">Título</label>
+                    <input class="form-control" id="editEventInputTitle" type="text">
+                    <div class="invalid-feedback">
+                        Esse campo é requerido.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="editEventInputStartDateTime">Data de Início</label>
+                            <input class="form-control" id="editEventInputStartDateTime" type="text">
+                            <div class="invalid-feedback">
+                                Esse campo é requerido.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="form-group">
+                            <label for="editEventInputEndDateTime">Data de Fim</label>
+                            <input class="form-control" id="editEventInputEndDateTime" type="text">
+                            <div class="invalid-feedback">
+                                Esse campo é requerido.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editEventInputDescription">Descrição</label>
+                    <textarea class="form-control" id="editEventInputDescription" rows="9"></textarea>
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-primary" id="editEventSubmit" type="button">Editar &raquo;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Exclusão de Eventos -->
+<div aria-hidden="true" aria-labelledby="createEventModalLabel" class="modal fade" id="deleteEventModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEventModalLabel">Confirmar Exclusão</h5>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    Você tem certeza que deseja excluir o evento? Essa ação não poderá ser desfeita!
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-danger" id="deleteEventSubmit" type="button">Excluir &raquo;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script crossorigin="anonymous"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ=="
+        src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script crossorigin="anonymous"
+        integrity="sha512-cJ4aSZY0xBXrcH65MOwCloQAiTNCBm2F8/KlcBTlczgn4txZkT7h3YSXULN06pkUnsySMEg5BU4QCHAr97U7ng=="
+        src="https://cdnjs.cloudflare.com/ajax/libs/rome/3.0.2/rome.standalone.min.js"></script>
+<script src="../app.js"></script>
+</body>
+</html>
