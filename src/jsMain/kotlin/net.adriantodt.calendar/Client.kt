@@ -23,8 +23,7 @@ fun main() {
                 }
             }
         }
-    } catch (e: Exception) {
-        println("Main routine errored:")
-        e.printStackTrace()
+    } catch (it: Throwable) {
+        println("Um erro aconteceu na região principal do código: ${it.stackTraceToString()}")
     }
 }

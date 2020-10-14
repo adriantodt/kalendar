@@ -1,3 +1,10 @@
+/*
+ * Arquivo que define interfaces externas com a biblioteca Rome.
+ *
+ * Essa interface não é completa e representa apenas a parte que é importante para esse projeto.
+ */
+package js.externals.rome
+
 import moment.Moment
 import org.w3c.dom.Element
 import kotlin.js.Date
@@ -186,7 +193,7 @@ external interface RomeOptions {
         set(value) = definedExternally
 }
 
-fun romeOptions(block: RomeOptions.() -> Unit): RomeOptions {
+fun romeOptions(block: RomeOptions.() -> Unit = {}): RomeOptions {
     return js("({})").unsafeCast<RomeOptions>().apply(block)
 }
 

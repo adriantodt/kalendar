@@ -27,7 +27,6 @@ fun main() {
             post("login", LoginHandler(dao, algorithm))
             post("register", RegisterHandler(dao, algorithm, generator))
             get("events", EventsHandler(dao, verifier))
-            //get("events", MockEventsHandler(generator))
             get("event/:id", GetEventHandler(dao, verifier))
             post("event", CreateEventHandler(dao, generator, verifier))
             patch("event/:id", PatchEventHandler(dao, verifier))
